@@ -1,4 +1,5 @@
 // models/User.js
+
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
@@ -13,6 +14,10 @@ const UserSchema = new mongoose.Schema({
     unique: true,
   },
   password: {
+    type: String,
+    required: true,
+  },
+  salt: {
     type: String,
     required: true,
   },

@@ -1,5 +1,6 @@
 {
   "MONGO_URI": "mongodb://0.0.0.0:27017/CGB-Backend",
   "PORT": 3000,
-  "JWT_SECRET": "secretKey"
+  "jwtSecret": "/qX6gqENrRLgpxKdqibqSXKDEuQVz/I0xU21/wAJIbQ=",
+  "jwtExpiration": "24h"
 }
