@@ -48,14 +48,7 @@ async function update(req, res) {
     if (!blog) {
       return res.status(404).json({
         hasError: true,
-        message: "Not Found: Blog not found",
-      });
-    }
-
-    if (blog.userId.toString() !== userId) {
-      return res.status(403).json({
-        hasError: true,
-        message: "Forbidden: You do not have permission to update this blog",
+        message: "Blog not found",
       });
     }
 

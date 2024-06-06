@@ -29,4 +29,6 @@ module.exports = (app) => {
     ]),
     Controller.Blog.update
   );
+
+  app.delete("/api/blog/:id", Middleware, Controller.Blog.remove);
 };
