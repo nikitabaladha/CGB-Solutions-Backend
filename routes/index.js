@@ -8,6 +8,7 @@ module.exports = (app) => {
   app.post("/api/signup", Controller.User.signup);
   app.post("/api/login", Controller.User.login);
   app.get("/api/user", Middleware, Controller.User.get);
+
   app.post(
     "/api/blog",
     Middleware,
@@ -16,5 +17,16 @@ module.exports = (app) => {
       { name: "contentImageUrl", maxCount: 1 },
     ]),
     Controller.Blog.create
+  );
+  app.get("/api/blog/:id", Middleware, Controller.Blog.getOneById);
+  app.get("/api/blog", Controller.Blog.getAll);
+  app.put(
+    "api/blog/:id",
+    Middleware,
+    upload.fields([
+      { name: "bannerImageUrl", maxCount: 1 },
+      { name: "contentImageUrl", maxCount: 1 },
+    ]),
+    Controller.Blog.update
   );
 };

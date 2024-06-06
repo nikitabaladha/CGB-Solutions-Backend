@@ -1,6 +1,6 @@
 // controllers/Blog/create.js
 const Blog = require("../../models/Blog");
-const blogValidationSchema = require("../../validators/blogValidationSchema");
+const blogValidationSchema = require("../../validators/blogValidationSchema.js");
 
 async function create(req, res) {
   try {
