@@ -21,7 +21,7 @@ module.exports = (app) => {
   app.get("/api/blog/:id", Middleware, Controller.Blog.getOneById);
   app.get("/api/blog", Controller.Blog.getAll);
   app.put(
-    "api/blog/:id",
+    "/api/blog/:id",
     Middleware,
     upload.fields([
       { name: "bannerImageUrl", maxCount: 1 },
