@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const connectDB = require("./config/db");
@@ -12,7 +13,13 @@ connectDB();
 app.use(bodyParser.json());
 app.use(cors());
 
-const routes = require("./routes")(app);
+app.use("/bannerImage", express.static(path.join(__dirname, "bannerImage")));
+app.use("/contentImage", express.static(path.join(__dirname, "contentImage")));
+
+const routes = require("./routes");
+routes(app);
+
+// const routes = require("./routes")(app);
 
 const PORT = 3001;
 

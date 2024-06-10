@@ -20,7 +20,7 @@ async function update(req, res) {
       });
     }
 
-    const { title, author, date, summary } = req.body;
+    const { title, date, summary } = req.body;
 
     const bannerImageUrl = req.files.bannerImageUrl
       ? req.files.bannerImageUrl[0].path
@@ -31,7 +31,6 @@ async function update(req, res) {
 
     const { error } = blogValidationSchema.validate({
       title,
-      author,
       date,
       summary,
     });
@@ -53,7 +52,6 @@ async function update(req, res) {
     }
 
     blog.title = title;
-    blog.author = author;
     blog.date = date;
     blog.summary = summary;
     blog.bannerImageUrl = bannerImageUrl || blog.bannerImageUrl;

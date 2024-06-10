@@ -1,4 +1,5 @@
 // controllers/Blog/create.js
+const path = require("path");
 const Blog = require("../../models/Blog");
 const blogValidationSchema = require("../../validators/blogValidationSchema.js");
 
@@ -13,26 +14,31 @@ async function create(req, res) {
       });
     }
 
-    const { title, author, date, summary } = req.body;
+    const bannerPath = "/bannerImage/images";
+    const contentImagePath = "/contentImage/images";
+
+    const { title, date, summary } = req.body;
+
+    const formattedSummary = summary.replace(/\r?\n/g, "<br>");
 
     const bannerImageUrl = req.files.bannerImageUrl
-      ? req.files.bannerImageUrl[0].path
+      ? bannerPath + "/" + req.files.bannerImageUrl[0].filename
       : null;
-    const contentImageUrl = req.files.contentImageUrl
-      ? req.files.contentImageUrl[0].path
+    const contentImageUrl = req.files.bannerImageUrl
+      ? contentImagePath + "/" + req.files.contentImageUrl[0].filename
       : null;
 
     const { error } = blogValidationSchema.validate({
       title,
-      author,
       date,
       summary,
     });
 
-    if (error) {
+    if (error?.details?.length) {
+      const errorMessages = error.details[0].message;
       return res.status(400).json({
         hasError: true,
-        message: error.details.map((detail) => detail.message).join(", "),
+        message: errorMessages,
       });
     }
 
@@ -41,9 +47,8 @@ async function create(req, res) {
       bannerImageUrl,
       contentImageUrl,
       title,
-      author,
       date,
-      summary,
+      summary: formattedSummary,
       status: "pending",
     });
 
