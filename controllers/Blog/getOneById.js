@@ -11,7 +11,9 @@ async function getOneById(req, res) {
       });
     }
 
-    const blog = await Blog.findById(blogId);
+    const blog = await Blog.findById(blogId)
+      .populate("userId", "userName")
+      .lean();
 
     if (!blog) {
       return res.status(404).json({
@@ -20,10 +22,19 @@ async function getOneById(req, res) {
       });
     }
 
+    const updatedBlog = {
+      ...blog,
+      userName: blog.userId ? blog.userId.userName : null,
+      userId: blog.userId ? blog.userId._id : null,
+      summary: blog.summary,
+      bannerImageUrl: "http://localhost:3001" + blog.bannerImageUrl,
+      contentImageUrl: "http://localhost:3001" + blog.contentImageUrl,
+    };
+
     return res.status(200).json({
       hasError: false,
       message: "Blog retrieved successfully",
-      data: blog,
+      data: updatedBlog,
     });
   } catch (error) {
     console.error("Error during retrieving Blog:", error);
