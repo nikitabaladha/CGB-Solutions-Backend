@@ -1,4 +1,4 @@
-// middleware/uploadImages.js
+//controllers/Blog/uploadImages.js
 
 const multer = require("multer");
 const path = require("path");
