@@ -1,3 +1,83 @@
+// const Blog = require("../../models/Blog");
+// const blogValidationSchema = require("../../validators/blogValidationSchema.js");
+
+// async function update(req, res) {
+//   try {
+//     const userId = req.user.id;
+//     const blogId = req.params.id;
+
+//     if (!userId) {
+//       return res.status(403).json({
+//         hasError: true,
+//         message: "Forbidden: Only logged-in users can update Blog",
+//       });
+//     }
+
+//     if (!blogId) {
+//       return res.status(400).json({
+//         hasError: true,
+//         message: "Blog ID is required",
+//       });
+//     }
+
+//     const { title, date, summary } = req.body;
+
+//     const bannerImageUrl = req.files.bannerImageUrl
+//       ? req.files.bannerImageUrl[0].path
+//       : null;
+//     const contentImageUrl = req.files.contentImageUrl
+//       ? req.files.contentImageUrl[0].path
+//       : null;
+
+//     const { error } = blogValidationSchema.validate({
+//       title,
+//       date,
+//       summary,
+//     });
+
+//     if (error) {
+//       return res.status(400).json({
+//         hasError: true,
+//         message: error.details.map((detail) => detail.message).join(", "),
+//       });
+//     }
+
+//     const blog = await Blog.findById(blogId);
+
+//     if (!blog) {
+//       return res.status(404).json({
+//         hasError: true,
+//         message: "Blog not found",
+//       });
+//     }
+
+//     blog.title = title;
+//     blog.date = date;
+//     blog.summary = summary;
+//     blog.bannerImageUrl = bannerImageUrl || blog.bannerImageUrl;
+//     blog.contentImageUrl = contentImageUrl || blog.contentImageUrl;
+//     blog.status = "pending";
+
+//     const updatedBlog = await blog.save();
+
+//     return res.status(200).json({
+//       hasError: false,
+//       message: "Blog updated successfully",
+//       data: updatedBlog,
+//     });
+//   } catch (error) {
+//     console.error("Error during updating Blog:", error);
+
+//     return res.status(500).json({
+//       hasError: true,
+//       message: "Internal Server Error",
+//     });
+//   }
+// }
+
+// module.exports = update;
+
+const path = require("path");
 const Blog = require("../../models/Blog");
 const blogValidationSchema = require("../../validators/blogValidationSchema.js");
 
@@ -13,21 +93,45 @@ async function update(req, res) {
       });
     }
 
-    if (!blogId) {
-      return res.status(400).json({
+    const existingBlog = await Blog.findById(blogId);
+
+    if (!existingBlog) {
+      return res.status(404).json({
         hasError: true,
-        message: "Blog ID is required",
+        message: "Blog not found",
       });
     }
 
+    if (existingBlog.userId.toString() !== userId) {
+      return res.status(403).json({
+        hasError: true,
+        message: "Forbidden: You can only update your own blogs",
+      });
+    }
+
+    const bannerPath = "/bannerImage/images";
+    const contentImagePath = "/contentImage/images";
+
     const { title, date, summary } = req.body;
 
+    const isEmptySummary =
+      !summary || summary.trim() === "" || summary === "<p><br></p>";
+
+    if (isEmptySummary) {
+      return res.status(400).json({
+        hasError: true,
+        message: "Summary is required",
+      });
+    }
+
+    const formattedSummary = summary.replace(/\r?\n/g, "<br>");
+
     const bannerImageUrl = req.files.bannerImageUrl
-      ? req.files.bannerImageUrl[0].path
-      : null;
+      ? bannerPath + "/" + req.files.bannerImageUrl[0].filename
+      : existingBlog.bannerImageUrl;
     const contentImageUrl = req.files.contentImageUrl
-      ? req.files.contentImageUrl[0].path
-      : null;
+      ? contentImagePath + "/" + req.files.contentImageUrl[0].filename
+      : existingBlog.contentImageUrl;
 
     const { error } = blogValidationSchema.validate({
       title,
@@ -35,39 +139,36 @@ async function update(req, res) {
       summary,
     });
 
-    if (error) {
+    if (error?.details?.length) {
+      const errorMessages = error.details[0].message;
       return res.status(400).json({
         hasError: true,
-        message: error.details.map((detail) => detail.message).join(", "),
+        message: errorMessages,
       });
     }
 
-    const blog = await Blog.findById(blogId);
+    existingBlog.title = title;
+    existingBlog.date = date;
+    existingBlog.summary = formattedSummary;
+    existingBlog.bannerImageUrl = bannerImageUrl;
+    existingBlog.contentImageUrl = contentImageUrl;
 
-    if (!blog) {
-      return res.status(404).json({
-        hasError: true,
-        message: "Blog not found",
-      });
-    }
-
-    blog.title = title;
-    blog.date = date;
-    blog.summary = summary;
-    blog.bannerImageUrl = bannerImageUrl || blog.bannerImageUrl;
-    blog.contentImageUrl = contentImageUrl || blog.contentImageUrl;
-    blog.status = "pending";
-
-    const updatedBlog = await blog.save();
+    await existingBlog.save();
 
     return res.status(200).json({
       hasError: false,
       message: "Blog updated successfully",
-      data: updatedBlog,
+      data: existingBlog,
     });
   } catch (error) {
-    console.error("Error during updating Blog:", error);
+    if (error.code === 11000) {
+      return res.status(400).json({
+        hasError: true,
+        message: "A blog post with this title already exists for this user",
+      });
+    }
 
+    console.error("Error during updating Blog:", error);
     return res.status(500).json({
       hasError: true,
       message: "Internal Server Error",

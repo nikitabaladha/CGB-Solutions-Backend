@@ -20,6 +20,7 @@ module.exports = (app) => {
   );
   app.get("/api/blog/:id", Controller.Blog.getOneById);
   app.get("/api/blog", Controller.Blog.getAll);
+  app.get("/api/blog/user/:userId", Middleware, Controller.Blog.getAllByUserId);
   app.put(
     "/api/blog/:id",
     Middleware,

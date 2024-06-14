@@ -40,6 +40,9 @@ const BlogSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+BlogSchema.index({ userId: 1, title: 1 }, { unique: true });
+
 const Blog = mongoose.model("Blog", BlogSchema);
 
 module.exports = Blog;

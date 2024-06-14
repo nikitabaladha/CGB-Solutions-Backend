@@ -15,6 +15,8 @@ function middleware(req, res, next) {
 
     req.user = decoded;
 
+    console.log("UserDetails...........", req.user);
+
     next();
   } catch (error) {
     console.error(error.message);

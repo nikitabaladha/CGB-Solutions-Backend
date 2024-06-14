@@ -55,9 +55,14 @@ async function login(req, res) {
 
     return res.status(200).json({
       token,
+      userDetails: {
+        id: user.id,
+        userName: user.userName,
+        role: user.role,
+        email: user.email,
+      },
       hasError: false,
       message: "Login Successful",
-      token,
     });
   } catch (error) {
     console.error(error.message);

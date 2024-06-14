@@ -14,10 +14,33 @@ async function create(req, res) {
       });
     }
 
+    if (!req.files.bannerImageUrl || !req.files.contentImageUrl) {
+      return res.status(400).json({
+        hasError: true,
+        message: "Banner image is required",
+      });
+    }
+
+    if (!req.files.contentImageUrl) {
+      return res.status(400).json({
+        hasError: true,
+        message: "Content image is required",
+      });
+    }
     const bannerPath = "/bannerImage/images";
     const contentImagePath = "/contentImage/images";
 
     const { title, date, summary } = req.body;
+
+    const isEmptySummary =
+      !summary || summary.trim() === "" || summary === "<p><br></p>";
+
+    if (isEmptySummary) {
+      return res.status(400).json({
+        hasError: true,
+        message: "Summary is required",
+      });
+    }
 
     const formattedSummary = summary.replace(/\r?\n/g, "<br>");
 
@@ -54,12 +77,21 @@ async function create(req, res) {
 
     return res.status(201).json({
       hasError: false,
-      message: "Blog created successfully",
+      message:
+        "Blog submitted successfully, The status is " +
+        newBlog.status +
+        " You will be notified when the it is approved by the Admin.",
       data: newBlog,
     });
   } catch (error) {
-    console.error("Error during creating Blog:", error);
+    if (error.code === 11000) {
+      return res.status(400).json({
+        hasError: true,
+        message: "A blog post with this title already exists for this user",
+      });
+    }
 
+    console.error("Error during creating Blog:", error);
     return res.status(500).json({
       hasError: true,
       message: "Internal Server Error",
