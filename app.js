@@ -19,8 +19,6 @@ app.use("/contentImage", express.static(path.join(__dirname, "contentImage")));
 const routes = require("./routes");
 routes(app);
 
-// const routes = require("./routes")(app);
-
 const PORT = 3001;
 
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));

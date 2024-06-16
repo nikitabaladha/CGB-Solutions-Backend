@@ -24,25 +24,38 @@ module.exports = (app) => {
   app.post(
     "/api/approve-create/:id",
     verifyAdmin,
-    Controller.Blog.approveCreate
+    Controller.Admin.approveCreate
   );
-  app.post("/api/reject-create/:id", verifyAdmin, Controller.Blog.rejectCreate);
+
+  app.post(
+    "/api/reject-create/:id",
+    verifyAdmin,
+    Controller.Admin.rejectCreate
+  );
 
   app.post(
     "/api/approve-update/:id",
     verifyAdmin,
-    Controller.Blog.approveUpdate
+    Controller.Admin.approveUpdate
   );
 
-  app.post("/api/reject-update/:id", verifyAdmin, Controller.Blog.rejectUpdate);
+  app.post(
+    "/api/reject-update/:id",
+    verifyAdmin,
+    Controller.Admin.rejectUpdate
+  );
 
   app.post(
     "/api/approve-delete/:id",
     verifyAdmin,
-    Controller.Blog.approveDelete
+    Controller.Admin.approveDelete
   );
 
-  app.post("/api/reject-delete/:id", verifyAdmin, Controller.Blog.rejectDelete);
+  app.post(
+    "/api/reject-delete/:id",
+    verifyAdmin,
+    Controller.Admin.rejectDelete
+  );
 
   app.get("/api/user", Middleware, Controller.User.get);
   app.get("/api/blog/:id", Controller.Blog.getOneById);
@@ -51,17 +64,17 @@ module.exports = (app) => {
   app.get(
     "/api/create-request",
     verifyAdmin,
-    Controller.Blog.getAllCreateRequest
+    Controller.Admin.getAllCreateRequest
   );
   app.get(
     "/api/update-request",
     verifyAdmin,
-    Controller.Blog.getAllUpdateRequest
+    Controller.Admin.getAllUpdateRequest
   );
   app.get(
     "/api/delete-request",
     verifyAdmin,
-    Controller.Blog.getAllDeleteRequest
+    Controller.Admin.getAllDeleteRequest
   );
 
   app.get("/api/blog/user/:userId", Middleware, Controller.Blog.getAllByUserId);
