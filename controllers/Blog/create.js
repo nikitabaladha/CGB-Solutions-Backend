@@ -7,6 +7,10 @@ async function create(req, res) {
   try {
     const userId = req.user.id;
 
+    const userRole = req.user.role;
+
+    const status = userRole === "admin" ? "approved" : "pending";
+
     if (!userId) {
       return res.status(403).json({
         hasError: true,
@@ -72,7 +76,7 @@ async function create(req, res) {
       title,
       date,
       summary: formattedSummary,
-      status: "pending",
+      status,
     });
 
     return res.status(201).json({
