@@ -27,11 +27,11 @@ async function rejectCreate(req, res) {
 
     return res.status(200).json({
       hasError: false,
-      message: "Blog update rejected successfully",
+      message: "Blog create rejected successfully",
       data: blog,
     });
   } catch (error) {
-    console.error("Error during rejecting blog update:", error);
+    console.error("Error during rejecting blog create:", error);
     return res.status(500).json({
       hasError: true,
       message: "Internal Server Error",

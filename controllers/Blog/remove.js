@@ -48,9 +48,7 @@
 
 // ==================== =================================================================
 
-const path = require("path");
 const Blog = require("../../models/Blog");
-const blogValidationSchema = require("../../validators/blogValidationSchema.js");
 
 async function remove(req, res) {
   try {
@@ -65,9 +63,6 @@ async function remove(req, res) {
       });
     }
 
-    const status = role === "admin" ? "approved" : "pending";
-    const deleteRequest = role !== "admin";
-
     const blog = await Blog.findOne({ _id: blogId, userId: userId });
 
     if (!blog) {
@@ -77,16 +72,22 @@ async function remove(req, res) {
       });
     }
 
-    await Blog.findByIdAndDelete(blogId);
-
-    return res.status(201).json({
-      hasError: false,
-      message:
-        "Blog is deleted successfully. The status is " +
-        newBlog.status +
-        ". You will be notified when it is approved by the Admin.",
-      data: newBlog,
-    });
+    if (role === "admin") {
+      await Blog.findByIdAndDelete(blogId);
+      return res.status(200).json({
+        hasError: false,
+        message: "Blog is deleted successfully.",
+      });
+    } else {
+      blog.deleteRequest = true;
+      await blog.save();
+      return res.status(200).json({
+        hasError: false,
+        message:
+          "Blog deletion requested successfully. An admin will review and approve the request.",
+        data: blog,
+      });
+    }
   } catch (error) {
     console.error("Error during deleting Blog:", error);
     return res.status(500).json({

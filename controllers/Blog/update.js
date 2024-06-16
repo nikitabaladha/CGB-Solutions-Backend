@@ -172,7 +172,6 @@ async function update(req, res) {
       });
     }
 
-    // If subadmin, mark for update request
     if (role === "subadmin") {
       existingBlog.updateRequest = true;
       existingBlog.proposedChanges = {
@@ -182,7 +181,7 @@ async function update(req, res) {
         bannerImageUrl,
         contentImageUrl,
       };
-      existingBlog.status = "pending";
+      existingBlog.status = "approved";
     } else {
       existingBlog.title = title;
       existingBlog.date = date;
