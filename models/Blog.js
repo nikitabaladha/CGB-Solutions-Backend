@@ -62,4 +62,8 @@ BlogSchema.index({ userId: 1, title: 1 }, { unique: true });
 
 const Blog = mongoose.model("Blog", BlogSchema);
 
+Blog.createIndexes()
+  .then(() => console.log("Indexes created"))
+  .catch((err) => console.error("Error creating indexes:", err));
+
 module.exports = Blog;
