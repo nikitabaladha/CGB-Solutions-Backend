@@ -4,7 +4,7 @@ const User = require("../../models/User");
 const saltFunction = require("../../validators/saltFunction.js");
 
 const config = require("config");
-const signupValidationSchema = require("../../Validators/signupValidationSchema.js");
+const signupValidationSchema = require("../../validators/signupValidationSchema.js");
 
 async function signup(req, res) {
   try {

@@ -3,7 +3,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../../models/User");
 const config = require("config");
-const loginValidationSchema = require("../../Validators/loginValidationSchema.js");
+const loginValidationSchema = require("../../validators/loginValidationSchema.js");
 const { jwtSecret, jwtExpiration } = require("../../config/local.json");
 const saltFunction = require("../../validators/saltFunction");
 
